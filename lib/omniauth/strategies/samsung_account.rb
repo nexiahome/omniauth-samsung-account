@@ -73,7 +73,10 @@ module OmniAuth
           :client_id => options.client_id,
           :client_secret => options.client_secret
         }
-        client.options[:token_url] = "https://%s%s" % [auth_server_url, "/auth/oauth2/token"]
+
+        # Create a local var so we mutate a given client instance.
+        client = self.client
+        client.options[:token_url] = "https://%s%s" % [auth_server_url, TOKEN_URL_PATH]
         token = client.auth_code.get_token(code, base_params.merge(token_params.to_hash(:symbolize_keys => true)), deep_symbolize(options.auth_token_params))
         token.params["email"] = email
         token.params["api_server_url"] = api_server_url
