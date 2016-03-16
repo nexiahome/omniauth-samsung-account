@@ -1,15 +1,15 @@
-[![Gem Version](https://badge.fury.io/rb/omniauth-samsung-shca.svg)](https://badge.fury.io/rb/omniauth-samsung-shca)
+[![Gem Version](https://badge.fury.io/rb/omniauth-samsung-account.svg)](https://badge.fury.io/rb/omniauth-samsung-account)
 
-# omniauth-samsung-shca
+# omniauth-samsung-account
 
-An OmniAuth strategy for Samsung Smart Home Cloud API OAuth2 integration
+An OmniAuth strategy for Samsung Accounts (http://developer.samsung.com/account)
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'omniauth-samsung-shca'
+gem 'omniauth-samsung-account'
 ```
 
 And then execute:
@@ -22,7 +22,7 @@ You could add the middleware to a Rails app in `config/initializers/omniauth.rb`
 
 ```ruby
 Rails.application.config.middleware.use OmniAuth::Builder do
-  provider :samsung_shca, ENV["SHCA_CLIENT_ID"], ENV["SHCA_CLIENT_SECERT"]
+  provider :samsung_account, ENV["SAMSUNG_CLIENT_ID"], ENV["SAMSUNG_CLIENT_SECERT"]
 end
 ```
 
@@ -34,7 +34,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/hfwang/omniauth-samsung-shca. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/hfwang/omniauth-samsung-account. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 
 ## License
