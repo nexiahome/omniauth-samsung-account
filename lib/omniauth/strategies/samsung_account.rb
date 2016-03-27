@@ -17,6 +17,7 @@ module OmniAuth
         :authorize_url => 'https://us.account.samsung.com/account/check.do',
         :token_url => "https://auth.samsungosp.com#{TOKEN_URL_PATH}"
       }
+      option :gateway, nil
       option :scope, "3RD_PARTY"
       option :country_code, "US"
       option :language_code, "en"
@@ -47,6 +48,17 @@ module OmniAuth
       end
 
       def request_phase
+        c = client
+        gateway = (request.params["gateway"] || options.gateway ||
+                   request.params["country_code"] || options.country_code)
+        case gateway.downcase
+        when "us"
+          c.options[:authorize_url] = "https://us.account.samsung.com/mobile/account/check.do"
+        when "eu"
+          c.options[:authorize_url] = "https://account.samsung.com/mobile/account/check.do"
+        when "cn"
+          c.options[:authorize_url] = "https://account.samsung.cn/mobile/account/check.do"
+        end
         params = {
           "redirect_uri" => callback_url,
           "actionID" => "StartAP",
@@ -56,7 +68,7 @@ module OmniAuth
           "serviceChannel" => options.service_channel
         }.merge(authorize_params)
         params["goBackURL"] = options.go_back_url if options.go_back_url
-        redirect client.authorize_url(params)
+        redirect c.authorize_url(params)
       end
 
       protected
