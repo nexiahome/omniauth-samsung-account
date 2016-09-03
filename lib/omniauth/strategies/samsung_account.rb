@@ -11,11 +11,10 @@ module OmniAuth
 
       option :name, "samsung_account"
 
-      option :provider_ignores_state, true
       option :client_options, {
-        :site => 'https://account.samsung.com',
-        :authorize_url => 'https://us.account.samsung.com/account/check.do',
-        :token_url => "https://auth.samsungosp.com#{TOKEN_URL_PATH}"
+        site: 'https://account.samsung.com',
+        authorize_url: 'https://us.account.samsung.com/account/check.do',
+        token_url: "https://auth.samsungosp.com#{TOKEN_URL_PATH}"
       }
       option :gateway, nil
       option :scope, "3RD_PARTY"
@@ -47,6 +46,12 @@ module OmniAuth
         hash
       end
 
+      def authorize_params
+        params = super.merge(state: request.params["state"])
+        session["omniauth.state"] = params[:state]
+        params
+      end
+
       def request_phase
         c = client
         gateway = (request.params["gateway"] || options.gateway ||
@@ -71,7 +76,13 @@ module OmniAuth
         redirect c.authorize_url(params)
       end
 
+      def callback_phase # rubocop:disable AbcSize, CyclomaticComplexity, MethodLength, PerceivedComplexity
+        session["omniauth.expected_state"] = session["omniauth.state"]
+        super
+      end
+
       protected
+
       def build_samsung_access_token
         json = JSON.parse(request.params["code"])
         code = json["code"]
@@ -82,18 +93,18 @@ module OmniAuth
         closed_action = json["closedAction"]
 
         base_params = {
-          :client_id => options.client_id,
-          :client_secret => options.client_secret
+          client_id: options.client_id,
+          client_secret: options.client_secret
         }
 
         # Create a local var so we mutate a given client instance.
         client = self.client
         client.options[:token_url] = "https://%s%s" % [auth_server_url, TOKEN_URL_PATH]
-        token = client.auth_code.get_token(code, base_params.merge(token_params.to_hash(:symbolize_keys => true)), deep_symbolize(options.auth_token_params))
+        token = client.auth_code.get_token(code, base_params.merge(token_params.to_hash(symbolize_keys: true)), deep_symbolize(options.auth_token_params))
         token.params["email"] = email
         token.params["api_server_url"] = api_server_url
         token.params["auth_server_url"] = auth_server_url
-        return token
+        token
       end
       alias_method :build_access_token, :build_samsung_access_token
     end
